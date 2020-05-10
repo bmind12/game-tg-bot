@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+        "baseUrl": ".",
+        "target": "ES5",
+        "module": "CommonJS",
+        "sourceMap": true,
+        "outDir": "dist",
+        "skipLibCheck": true,
+        "listEmittedFiles": true,
+        "noEmitOnError": true
+    },
+    "include": ["src"],
+    "exclude": ["node_modules"]
+}
