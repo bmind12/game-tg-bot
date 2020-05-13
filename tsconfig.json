@@ -2,7 +2,7 @@
     "compilerOptions": {
         "baseUrl": ".",
         "target": "ES5",
-        "module": "CommonJS",
+        "module": "UMD",
         "sourceMap": true,
         "outDir": "dist",
         "skipLibCheck": true,
