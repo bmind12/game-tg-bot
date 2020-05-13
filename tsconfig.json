@@ -7,7 +7,8 @@
         "outDir": "dist",
         "skipLibCheck": true,
         "listEmittedFiles": true,
-        "noEmitOnError": true
+        "noEmitOnError": true,
+        "moduleResolution": "Node"
     },
     "include": ["src"],
     "exclude": ["node_modules"]
