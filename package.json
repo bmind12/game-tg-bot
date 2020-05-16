@@ -7,7 +7,7 @@
     "scripts": {
         "dev": "npm run build && run-p watch:**",
         "watch:src": "tsc --watch",
-        "watch:dist": "nodemon dist/index.js",
+        "watch:dist": "nodemon --inspect dist/index.js",
         "clean": "rm -rf dist",
         "build": "npm run clean && tsc",
         "prod": "npm run build && node dist/index.js",
