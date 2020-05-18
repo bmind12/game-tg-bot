@@ -21,6 +21,7 @@
     "dependencies": {
         "dotenv": "^8.2.0",
         "express": "^4.17.1",
+        "mongodb": "^3.5.7",
         "ngrok": "^3.2.7",
         "node-telegram-bot-api": "^0.40.0",
         "nodemon": "^2.0.3",
