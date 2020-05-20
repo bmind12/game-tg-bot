@@ -1,3 +1,5 @@
+import CitiesGame from '../entities/CitiesGame'
+
 const BOT_COMMOND = 'bot_command'
 export const COMMANDS_REGEXP = {
     start: new RegExp(/\/start/),
@@ -8,8 +10,10 @@ export const COMMANDS_REGEXP = {
 
 const handleOnStart = (bot): commandHandler => {
     return (msg): void => {
-        const chatId = msg.chat.id
-        bot.sendMessage(chatId, `hello, ${msg.chat.first_name}`)
+        const {id, first_name: name} = msg.chat
+
+        CitiesGame.start({id})
+        bot.sendMessage(id, `Game started, ${name}`)
     }
 }
 
