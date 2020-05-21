@@ -1,5 +1,5 @@
 export default abstract class Game {
-    abstract start()
-    abstract end()
-    abstract status()
+    abstract start(args: any): any
+    abstract end(args: any): any
+    abstract status(args: any): any
 }
