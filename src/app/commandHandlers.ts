@@ -11,8 +11,9 @@ export const COMMANDS_REGEXP = {
 const handleOnStart = (bot): commandHandler => {
     return (msg): void => {
         const {id, first_name: name} = msg.chat
+        const game = new CitiesGame(id)
 
-        CitiesGame.start({id})
+        game.start()
         bot.sendMessage(id, `Game started, ${name}`)
     }
 }

@@ -1,65 +1,41 @@
 import Game from './Game'
-import Database from './Database'
-
-interface CitiesGameData {
-    id: number
-}
+import GameRecord from './GameRecord'
 
 enum GameStatus {
     started = 'started',
     notStarted = 'notStarted',
 }
 
-export default abstract class CitiesGame extends Game {
-    private constructor() {
+export default class CitiesGame extends Game {
+    private gameRecord: GameRecord
+    constructor(private id: number) {
         super()
+
+        this.gameRecord = new GameRecord(id)
     }
 
-    static async start(gameData: CitiesGameData): Promise<void> {
-        const record = await CitiesGame.getGame(gameData)
+    async start(): Promise<void> {
+        const status = await this.status()
+        console.log('✅✅✅ status', status)
 
-        if (!record) {
-            Database.collection.insertOne(
-                {_id: gameData.id},
-                (error, result) => {
-                    // TODO: create a GameRecord Model / class
-                    if (error) console.error(error)
-                    console.log('inserted:', result)
-                }
+        if (!status) {
+            console.log(
+                '✅✅✅ await this.gameRecord.add()',
+                await this.gameRecord.add()
             )
         }
 
-        if (record.GameStatus !== GameStatus.started) {
-            Database.collection.updateOne(
-                {
-                    _id: gameData.id,
-                },
-                {
-                    $set: {
-                        gameStatus: GameStatus.started,
-                    },
-                },
-                (error, result) => {
-                    if (error) console.error(error)
-                    console.log('updated:', result)
-                }
-            )
+        if (status !== GameStatus.started) {
+            await this.gameRecord.update(GameStatus.started)
         }
-
-        console.log('### record', record)
     }
 
-    static async status(gameData: CitiesGameData): Promise<any> {
-        return await CitiesGame.getGame(gameData)
+    async status(): Promise<any> {
+        // TODO: check types
+        return await this.gameRecord.get()
     }
 
-    static end(): void {
+    end(): void {
         return
-    }
-
-    private static async getGame(gameData: CitiesGameData): Promise<any> {
-        return await Database.collection.findOne({
-            _id: gameData.id,
-        })
     }
 }
