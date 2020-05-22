@@ -1,31 +1,17 @@
-import {MongoClient, Collection} from 'mongodb'
+import {MongoClient, Db} from 'mongodb'
 
-const uri = `mongodb+srv://admin:${process.env.MONGO_ADMIN_PASSWORD}@telegram-goroda-game-bot-0slno.mongodb.net/test?retryWrites=true&w=majority`
+const uri = `mongodb+srv://admin:${process.env.MONGO_ADMIN_PASSWORD}@${process.env.MONGO_DB_NAME}.mongodb.net/test?retryWrites=true&w=majority`
 
-class Database {
-    private static instance: Database
-    public collection: Collection
+export default class Database {
+    public static instance: Db
 
-    constructor() {
-        const client = new MongoClient(uri, {
+    constructor(public db: Db) {}
+
+    static async init(): Promise<void> {
+        const client = await new MongoClient(uri, {
             useNewUrlParser: true,
             useUnifiedTopology: true,
-        })
-
-        client.connect((err) => {
-            this.collection = client.db('test').collection('users')
-
-            console.error(err)
-        })
-    }
-
-    static getInstance(): Database {
-        if (Database.instance === undefined) {
-            return new Database()
-        }
-
-        return this.instance
+        }).connect()
+        this.instance = await client.db('test')
     }
 }
-
-export default Database.getInstance()
