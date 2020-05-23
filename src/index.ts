@@ -1,6 +1,7 @@
 require('dotenv').config()
 import * as express from 'express'
 import * as ngrok from 'ngrok'
+import './globals'
 import './app'
 
 // Specify '0' to use ngrok i.e. localhost tunneling
