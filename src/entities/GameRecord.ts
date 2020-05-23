@@ -10,6 +10,10 @@ const GAME_RECORD_VALIDATOR = {
                 bsonType: 'number',
                 description: 'must be a string and is required',
             },
+            status: {
+                enum: [Object.values(GameStatus)],
+                description: 'must be a string and is required',
+            },
         },
     },
 }
