@@ -11,7 +11,7 @@ const GAME_RECORD_VALIDATOR = {
                 description: 'must be a string and is required',
             },
             status: {
-                enum: [Object.values(GameStatus)],
+                enum: Object.values(GameStatus),
                 description: 'must be a string and is required',
             },
         },
@@ -19,6 +19,7 @@ const GAME_RECORD_VALIDATOR = {
 }
 
 class GameRecord {
+    // TODO: add another abstraction to communicate with Mongo
     public static collection: Collection
 
     constructor(private id: number) {}
@@ -32,7 +33,7 @@ class GameRecord {
         )
     }
 
-    async get(): Promise<any> {
+    async get(): Promise<GameItem> {
         // TODO: check what it returs
         try {
             return await GameRecord.collection.findOne({_id: this.id})
@@ -41,24 +42,21 @@ class GameRecord {
         }
     }
 
-    async add(): Promise<any> {
-        // TODO: check what it returs
+    async add(status): Promise<void> {
         try {
-            await GameRecord.collection.insertOne({_id: this.id})
+            await GameRecord.collection.insertOne({_id: this.id, status})
         } catch (error) {
             console.error(error)
         }
     }
 
-    async update(status: string): Promise<any> {
-        // TODO: check what it returs
+    async update(status: string): Promise<void> {
         try {
             await GameRecord.collection.updateOne(
                 {_id: this.id},
                 {$set: {status}},
-                (error, result) => {
+                (error) => {
                     if (error) console.error(error)
-                    console.log('updated:', result)
                 }
             )
         } catch (error) {
