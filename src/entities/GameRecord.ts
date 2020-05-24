@@ -1,4 +1,4 @@
-import {Collection} from 'mongodb'
+import { Collection } from 'mongodb'
 import Database from './Database'
 
 const GAME_RECORD_VALIDATOR = {
@@ -34,9 +34,8 @@ class GameRecord {
     }
 
     async get(): Promise<GameItem> {
-        // TODO: check what it returs
         try {
-            return await GameRecord.collection.findOne({_id: this.id})
+            return await GameRecord.collection.findOne({ _id: this.id })
         } catch (error) {
             console.error(error)
         }
@@ -44,7 +43,7 @@ class GameRecord {
 
     async add(status): Promise<void> {
         try {
-            await GameRecord.collection.insertOne({_id: this.id, status})
+            await GameRecord.collection.insertOne({ _id: this.id, status })
         } catch (error) {
             console.error(error)
         }
@@ -53,8 +52,8 @@ class GameRecord {
     async update(status: string): Promise<void> {
         try {
             await GameRecord.collection.updateOne(
-                {_id: this.id},
-                {$set: {status}},
+                { _id: this.id },
+                { $set: { status } },
                 (error) => {
                     if (error) console.error(error)
                 }
