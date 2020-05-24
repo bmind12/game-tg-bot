@@ -10,7 +10,7 @@ export const COMMANDS_REGEXP = {
 
 const handleOnStart = (bot): commandHandler => {
     return (msg): void => {
-        const {id, first_name: name} = msg.chat
+        const { id, first_name: name } = msg.chat
         const game = new CitiesGame(id)
 
         game.start()
@@ -19,16 +19,22 @@ const handleOnStart = (bot): commandHandler => {
 }
 
 const handleOnStatus = (bot): commandHandler => {
-    return (msg): void => {
-        const chatId = msg.chat.id
-        bot.sendMessage(chatId, `status, ${msg.chat.first_name}`)
+    return async (msg): Promise<void> => {
+        const { id } = msg.chat
+        const game = new CitiesGame(id)
+        const status = await game.status()
+
+        bot.sendMessage(id, `Status: game ${status}`)
     }
 }
 
 const handleOnEnd = (bot): commandHandler => {
     return (msg): void => {
-        const chatId = msg.chat.id
-        bot.sendMessage(chatId, `bye, ${msg.chat.first_name}`)
+        const { id, first_name: name } = msg.chat
+        const game = new CitiesGame(id)
+
+        game.end()
+        bot.sendMessage(id, `Game ended, ${name}`)
     }
 }
 
