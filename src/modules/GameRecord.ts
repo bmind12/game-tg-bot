@@ -14,6 +14,9 @@ const GAME_RECORD_VALIDATOR = {
                 enum: Object.values(GameStatus),
                 description: 'must be a string and is required',
             },
+            cities: {
+                bsonType: 'object',
+            },
         },
     },
 }
@@ -35,15 +38,24 @@ class GameRecord {
 
     async get(): Promise<GameItem> {
         try {
-            return await GameRecord.collection.findOne({ _id: this.id })
+            const record = (await GameRecord.collection.findOne({
+                _id: this.id,
+            })) as GameItem
+            record
+
+            return record
         } catch (error) {
             console.error(error)
         }
     }
 
-    async add(status): Promise<void> {
+    async add(status: GameStatus, cities?: Cities): Promise<void> {
         try {
-            await GameRecord.collection.insertOne({ _id: this.id, status })
+            await GameRecord.collection.insertOne({
+                _id: this.id,
+                status,
+                cities,
+            })
         } catch (error) {
             console.error(error)
         }
@@ -58,6 +70,14 @@ class GameRecord {
                     if (error) console.error(error)
                 }
             )
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    async delete(): Promise<void> {
+        try {
+            await GameRecord.collection.deleteOne({ _id: this.id })
         } catch (error) {
             console.error(error)
         }
