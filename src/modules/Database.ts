@@ -1,4 +1,4 @@
-import {MongoClient, Db} from 'mongodb'
+import { MongoClient, Db } from 'mongodb'
 
 const uri = `mongodb+srv://admin:${process.env.MONGO_ADMIN_PASSWORD}@${process.env.MONGO_DB_NAME}.mongodb.net/test?retryWrites=true&w=majority`
 

@@ -1,4 +1,4 @@
-import CitiesGame from '../entities/CitiesGame'
+import CitiesGame from '../modules/CitiesGame'
 
 const BOT_COMMOND = 'bot_command'
 export const COMMANDS_REGEXP = {

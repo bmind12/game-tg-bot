@@ -1,10 +1,10 @@
-import {COMMANDS_REGEXP, commandHandlers} from './commandHandlers'
-import Bot from '../entities/Bot' // TODO: create module links
-import Database from '../entities/Database'
-import GameRecord from '../entities/GameRecord'
+import { COMMANDS_REGEXP, commandHandlers } from './commandHandlers'
+import Bot from '../modules/Bot' // TODO: create module links
+import Database from '../modules/Database'
+import GameRecord from '../modules/GameRecord'
 
 const TOKEN = process.env.TELEGRAM_TOKEN
-const bot = new Bot(TOKEN, {polling: true})
+const bot = new Bot(TOKEN, { polling: true })
 
 const initGame = async (): Promise<void> => {
     try {
