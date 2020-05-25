@@ -1,6 +1,12 @@
 import Game from './Game'
 import GameRecord from './GameRecord'
 
+const CITIES_MOCK: Cities = {
+    a: ['aloha', 'ambient'],
+    b: ['book', 'back', 'bright'],
+    c: ['call', 'cell', 'city'],
+}
+
 export default class CitiesGame extends Game {
     private gameRecord: GameRecord
 
@@ -13,7 +19,7 @@ export default class CitiesGame extends Game {
         const gameItem = await this.gameRecord.get()
 
         if (!gameItem) {
-            await this.create(GameStatus.started)
+            await this.create(GameStatus.started, CITIES_MOCK)
         } else if (gameItem?.status !== GameStatus.started) {
             await this.update(GameStatus.started)
         }
@@ -26,7 +32,7 @@ export default class CitiesGame extends Game {
             if (status) {
                 return status
             } else {
-                await this.create(GameStatus.started)
+                await this.create(GameStatus.started, CITIES_MOCK)
 
                 return GameStatus.started
             }
@@ -36,24 +42,22 @@ export default class CitiesGame extends Game {
     }
 
     async end(): Promise<void> {
-        const gameItem = await this.get()
-
-        if (!gameItem) {
-            this.create(GameStatus.notStarted)
-        } else {
-            await this.update(GameStatus.notStarted)
-        }
+        await this.delete()
     }
 
-    async create(status: GameStatus): Promise<void> {
-        await this.gameRecord.add(status)
+    private async create(status: GameStatus, cities?: Cities): Promise<void> {
+        await this.gameRecord.add(status, cities)
     }
 
-    async get(): Promise<GameItem> {
+    private async get(): Promise<GameItem> {
         return await this.gameRecord.get()
     }
 
-    async update(status: GameStatus): Promise<void> {
+    private async update(status: GameStatus): Promise<void> {
         await this.gameRecord.update(status)
+    }
+
+    private async delete(): Promise<void> {
+        await this.gameRecord.delete()
     }
 }

@@ -1,6 +1,6 @@
 import CitiesGame from '../modules/CitiesGame'
+import { isBotCommand } from './helpers'
 
-const BOT_COMMOND = 'bot_command'
 export const COMMANDS_REGEXP = {
     start: new RegExp(/\/start/),
     status: new RegExp(/\/status/),
@@ -8,17 +8,17 @@ export const COMMANDS_REGEXP = {
     any: new RegExp(/.+/),
 }
 
-const handleOnStart = (bot): commandHandler => {
+const handleOnStart = (bot): CommandHandler => {
     return (msg): void => {
         const { id, first_name: name } = msg.chat
         const game = new CitiesGame(id)
 
         game.start()
-        bot.sendMessage(id, `Game started, ${name}`)
+        bot.sendMessage(id, `Name a first city, ${name}`)
     }
 }
 
-const handleOnStatus = (bot): commandHandler => {
+const handleOnStatus = (bot): CommandHandler => {
     return async (msg): Promise<void> => {
         const { id } = msg.chat
         const game = new CitiesGame(id)
@@ -28,7 +28,7 @@ const handleOnStatus = (bot): commandHandler => {
     }
 }
 
-const handleOnEnd = (bot): commandHandler => {
+const handleOnEnd = (bot): CommandHandler => {
     return (msg): void => {
         const { id, first_name: name } = msg.chat
         const game = new CitiesGame(id)
@@ -38,22 +38,21 @@ const handleOnEnd = (bot): commandHandler => {
     }
 }
 
-const handleOnAny = (bot): commandHandler => {
+const handleOnAny = (bot): CommandHandler => {
     return (msg): void => {
-        const chatId = msg.chat.id
+        const id = msg.chat.id
         const text = msg.text
-        const isBotCommand = msg.entities?.[0]?.type === BOT_COMMOND
+        const game = new CitiesGame(id)
 
-        if (isBotCommand) {
+        if (isBotCommand(msg)) {
             const isValid = Object.values(COMMANDS_REGEXP).some((regexp) =>
                 regexp.test(text)
             )
 
-            if (!isValid)
-                bot.sendMessage(chatId, `я не знаю команду ${text} 😞`)
+            if (!isValid) bot.sendMessage(id, `я не знаю команду ${text} 😞`)
         } else {
             bot.sendMessage(
-                chatId,
+                id,
                 `Пожалуйста введи одну из доступных команд: /${Object.keys(
                     COMMANDS_REGEXP
                 ).join(', /')}`
