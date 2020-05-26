@@ -12,20 +12,20 @@ const initGame = async (): Promise<void> => {
         await GameRecord.init()
 
         bot.onText(
-            COMMANDS_REGEXP.start,
-            commandHandlers.get(COMMANDS_REGEXP.start)(bot)
+            COMMANDS_REGEXP.get('start'),
+            commandHandlers.get(COMMANDS_REGEXP.get('start'))(bot)
         )
         bot.onText(
-            COMMANDS_REGEXP.status,
-            commandHandlers.get(COMMANDS_REGEXP.status)(bot)
+            COMMANDS_REGEXP.get('status'),
+            commandHandlers.get(COMMANDS_REGEXP.get('status'))(bot)
         )
         bot.onText(
-            COMMANDS_REGEXP.end,
-            commandHandlers.get(COMMANDS_REGEXP.end)(bot)
+            COMMANDS_REGEXP.get('end'),
+            commandHandlers.get(COMMANDS_REGEXP.get('end'))(bot)
         )
         bot.onText(
-            COMMANDS_REGEXP.any,
-            commandHandlers.get(COMMANDS_REGEXP.any)(bot)
+            COMMANDS_REGEXP.get('any'),
+            commandHandlers.get(COMMANDS_REGEXP.get('any'))(bot)
         )
     } catch (error) {
         console.error(error)

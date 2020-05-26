@@ -1,12 +1,12 @@
 import CitiesGame from '../modules/CitiesGame'
-import { isBotCommand } from './helpers'
+import { isBotCommand, handleBotCommand } from './helpers'
 
-export const COMMANDS_REGEXP = {
-    start: new RegExp(/\/start/),
-    status: new RegExp(/\/status/),
-    end: new RegExp(/\/end/),
-    any: new RegExp(/.+/),
-}
+export const COMMANDS_REGEXP = new Map([
+    ['start', new RegExp(/\/start/)],
+    ['status', new RegExp(/\/status/)],
+    ['end', new RegExp(/\/end/)],
+    ['any', new RegExp(/.+/)],
+])
 
 const handleOnStart = (bot): CommandHandler => {
     return (msg): void => {
@@ -42,15 +42,9 @@ const handleOnAny = (bot): CommandHandler => {
     return (msg): void => {
         const id = msg.chat.id
         const text = msg.text
-        const game = new CitiesGame(id)
 
-        if (isBotCommand(msg)) {
-            const isValid = Object.values(COMMANDS_REGEXP).some((regexp) =>
-                regexp.test(text)
-            )
-
-            if (!isValid) bot.sendMessage(id, `я не знаю команду ${text} 😞`)
-        } else {
+        if (isBotCommand(msg)) handleBotCommand(id, text, bot)
+        else {
             bot.sendMessage(
                 id,
                 `Пожалуйста введи одну из доступных команд: /${Object.keys(
@@ -62,8 +56,8 @@ const handleOnAny = (bot): CommandHandler => {
 }
 
 export const commandHandlers = new Map([
-    [COMMANDS_REGEXP.start, handleOnStart],
-    [COMMANDS_REGEXP.status, handleOnStatus],
-    [COMMANDS_REGEXP.end, handleOnEnd],
-    [COMMANDS_REGEXP.any, handleOnAny],
+    [COMMANDS_REGEXP.get('start'), handleOnStart],
+    [COMMANDS_REGEXP.get('status'), handleOnStatus],
+    [COMMANDS_REGEXP.get('end'), handleOnEnd],
+    [COMMANDS_REGEXP.get('any'), handleOnAny],
 ])
