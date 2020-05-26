@@ -9,12 +9,11 @@ export const COMMANDS_REGEXP = new Map([
 ])
 
 const handleOnStart = (bot): CommandHandler => {
-    return (msg): void => {
-        const { id, first_name: name } = msg.chat
+    return async (msg): Promise<void> => {
+        const { id } = msg.chat
         const game = new CitiesGame(id)
 
-        game.start()
-        bot.sendMessage(id, `Name a first city, ${name}`)
+        bot.sendMessage(id, await game.start())
     }
 }
 

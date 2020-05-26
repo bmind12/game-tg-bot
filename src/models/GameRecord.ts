@@ -4,7 +4,7 @@ import Database from './Database'
 const GAME_RECORD_VALIDATOR = {
     $jsonSchema: {
         bsonType: 'object',
-        required: ['_id', 'status'],
+        required: ['_id', 'status', 'history'],
         properties: {
             _id: {
                 bsonType: 'number',
@@ -16,6 +16,9 @@ const GAME_RECORD_VALIDATOR = {
             },
             cities: {
                 bsonType: 'object',
+            },
+            history: {
+                bsonType: 'array',
             },
         },
     },
@@ -49,11 +52,16 @@ class GameRecord {
         }
     }
 
-    async add(status: GameStatus, cities?: Cities): Promise<void> {
+    async add(
+        status: GameStatus,
+        history: GameHistory,
+        cities?: Cities
+    ): Promise<void> {
         try {
             await GameRecord.collection.insertOne({
                 _id: this.id,
                 status,
+                history,
                 cities,
             })
         } catch (error) {

@@ -3,4 +3,10 @@ enum GameStatus {
     notStarted = 'notStarted',
 }
 
-;(global as {GameStatus?}).GameStatus = GameStatus
+enum Player {
+    Bot,
+    User,
+}
+
+;(global as Global).GameStatus = GameStatus
+;(global as Global).Player = Player

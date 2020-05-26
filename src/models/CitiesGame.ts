@@ -9,20 +9,25 @@ const CITIES_MOCK: Cities = {
 
 export default class CitiesGame extends Game {
     private gameRecord: GameRecord
+    private history: GameHistory = []
 
     constructor(id: number) {
         super()
 
         this.gameRecord = new GameRecord(id)
     }
-    async start(): Promise<void> {
+
+    async start(): Promise<string> {
         const gameItem = await this.gameRecord.get()
+        const botMove = this.handleBotMove()
 
         if (!gameItem) {
             await this.create(GameStatus.started, CITIES_MOCK)
         } else if (gameItem?.status !== GameStatus.started) {
             await this.update(GameStatus.started)
         }
+
+        return botMove
     }
 
     async status(): Promise<GameStatus> {
@@ -46,7 +51,7 @@ export default class CitiesGame extends Game {
     }
 
     private async create(status: GameStatus, cities?: Cities): Promise<void> {
-        await this.gameRecord.add(status, cities)
+        await this.gameRecord.add(status, this.history, cities)
     }
 
     private async get(): Promise<GameItem> {
@@ -60,4 +65,18 @@ export default class CitiesGame extends Game {
     private async delete(): Promise<void> {
         await this.gameRecord.delete()
     }
+
+    private updateHistory(player: Player, city: string): void {
+        this.history.push([player, city])
+    }
+
+    private handleBotMove(lastLetter = 'a'): string {
+        const city = CITIES_MOCK[lastLetter].pop() // TODO: implement random pick
+
+        this.updateHistory(Player.Bot, city)
+
+        return city
+    }
+
+    // handlePlayerMove(): void {}
 }
