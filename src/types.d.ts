@@ -1,6 +1,11 @@
 import TelegramBot = require('node-telegram-bot-api')
 
 declare global {
+    interface Global {
+        GameStatus?
+        Player?
+    }
+
     type CommandHandler = (msg: TelegramBot.Message) => void
 
     type Cities = { [key: string]: string[] }
@@ -9,5 +14,8 @@ declare global {
         _id: number
         status: GameStatus
         cities: Cities
+        history: GameHistory
     }
+
+    type GameHistory = [Player, string][]
 }
