@@ -21,9 +21,9 @@ const handleOnStatus = (bot): CommandHandler => {
     return async (msg): Promise<void> => {
         const { id } = msg.chat
         const game = new CitiesGame(id)
-        const status = await game.status()
+        const { status, history } = await game.status()
 
-        bot.sendMessage(id, `Status: game ${status}`)
+        bot.sendMessage(id, `Status: game ${status}. Game history: ${history}`)
     }
 }
 

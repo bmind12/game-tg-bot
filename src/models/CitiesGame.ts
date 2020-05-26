@@ -24,9 +24,11 @@ export default class CitiesGame extends Game {
         return botMove || 'Я проиграл 😭'
     }
 
-    async status(): Promise<GameStatus> {
+    async status(): Promise<Partial<GameItem>> {
         try {
-            return (await this.get())?.status
+            const { status, history } = await this.get()
+
+            return { history, status }
         } catch (error) {
             console.error(error)
         }
