@@ -1,4 +1,4 @@
-import { Collection } from 'mongodb'
+import { Collection, InsertOneWriteOpResult } from 'mongodb'
 import Database from './Database'
 
 const GAME_RECORD_VALIDATOR = {
@@ -56,27 +56,26 @@ class GameRecord {
         status: GameStatus,
         history: GameHistory,
         cities?: Cities
-    ): Promise<void> {
+    ): Promise<GameItem> {
         try {
-            await GameRecord.collection.insertOne({
+            const result = await GameRecord.collection.insertOne({
                 _id: this.id,
                 status,
                 history,
                 cities,
             })
+
+            return result?.ops?.[0]
         } catch (error) {
             console.error(error)
         }
     }
 
-    async update(status: string): Promise<void> {
+    async update(data): Promise<void> {
         try {
             await GameRecord.collection.updateOne(
                 { _id: this.id },
-                { $set: { status } },
-                (error) => {
-                    if (error) console.error(error)
-                }
+                { $set: data }
             )
         } catch (error) {
             console.error(error)

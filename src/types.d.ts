@@ -14,6 +14,7 @@ declare global {
         _id: number
         status: GameStatus
         cities: Cities
+        history: GameHistory
     }
 
     type GameHistory = [Player, string][]

@@ -18,65 +18,65 @@ export default class CitiesGame extends Game {
     }
 
     async start(): Promise<string> {
-        const gameItem = await this.gameRecord.get()
-        const botMove = this.handleBotMove()
+        const gameItem = await this.get()
+        const botMove = this.handleBotMove(gameItem?.cities)
 
-        if (!gameItem) {
-            await this.create(GameStatus.started, CITIES_MOCK)
-        } else if (gameItem?.status !== GameStatus.started) {
-            await this.update(GameStatus.started)
-        }
-
-        return botMove
+        return botMove || 'Я проиграл 😭'
     }
 
     async status(): Promise<GameStatus> {
         try {
-            const status = (await this.get())?.status
-
-            if (status) {
-                return status
-            } else {
-                await this.create(GameStatus.started, CITIES_MOCK)
-
-                return GameStatus.started
-            }
+            return (await this.get())?.status
         } catch (error) {
             console.error(error)
         }
     }
 
     async end(): Promise<void> {
-        await this.delete()
-    }
-
-    private async create(status: GameStatus, cities?: Cities): Promise<void> {
-        await this.gameRecord.add(status, this.history, cities)
+        await this.gameRecord.delete()
     }
 
     private async get(): Promise<GameItem> {
-        return await this.gameRecord.get()
+        let record = await this.gameRecord.get()
+
+        if (!record) {
+            record = await this.gameRecord.add(
+                GameStatus.started,
+                this.history,
+                CITIES_MOCK
+            )
+        }
+
+        this.history = record.history
+
+        return record
     }
 
-    private async update(status: GameStatus): Promise<void> {
-        await this.gameRecord.update(status)
-    }
-
-    private async delete(): Promise<void> {
-        await this.gameRecord.delete()
+    private async update(data: Partial<GameItem>): Promise<void> {
+        await this.gameRecord.update(data)
     }
 
     private updateHistory(player: Player, city: string): void {
         this.history.push([player, city])
     }
 
-    private handleBotMove(lastLetter = 'a'): string {
-        const city = CITIES_MOCK[lastLetter].pop() // TODO: implement random pick
+    private handleBotMove(cities, lastLetter = 'a'): string | void {
+        // TODO: implement random pick
+        const city = cities?.[lastLetter].pop()
+
+        if (!city) return this.handleBotLost()
 
         this.updateHistory(Player.Bot, city)
+
+        this.update({
+            cities,
+            history: this.history,
+        })
 
         return city
     }
 
-    // handlePlayerMove(): void {}
+    private handleBotLost(): void {
+        this.update({ status: GameStatus.notStarted })
+    }
 }
