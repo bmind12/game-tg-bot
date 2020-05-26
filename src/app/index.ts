@@ -1,7 +1,7 @@
 import { COMMANDS_REGEXP, commandHandlers } from './commandHandlers'
-import Bot from '../modules/Bot' // TODO: create module links
-import Database from '../modules/Database'
-import GameRecord from '../modules/GameRecord'
+import Bot from '../models/Bot' // TODO: create module links
+import Database from '../models/Database'
+import GameRecord from '../models/GameRecord'
 
 const TOKEN = process.env.TELEGRAM_TOKEN
 const bot = new Bot(TOKEN, { polling: true })

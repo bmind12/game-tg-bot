@@ -1,4 +1,4 @@
-import CitiesGame from '../modules/CitiesGame'
+import CitiesGame from '../models/CitiesGame'
 import { isBotCommand, handleBotCommand } from './helpers'
 
 export const COMMANDS_REGEXP = new Map([
