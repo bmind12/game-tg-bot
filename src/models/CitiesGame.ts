@@ -8,6 +8,10 @@ const CITIES_MOCK: Cities = {
     c: ['call', 'cell', 'city'],
 }
 
+const enum BotReply {
+    Lost = 'Я проиграл 😭',
+}
+
 export default class CitiesGame extends Game {
     private gameRecord: GameRecord
     private history: GameHistory = []
@@ -22,7 +26,7 @@ export default class CitiesGame extends Game {
         const gameItem = await this.get()
         const botMove = this.handleBotMove(gameItem?.cities)
 
-        return botMove || 'Я проиграл 😭'
+        return botMove
     }
 
     async status(): Promise<Partial<GameItem>> {
@@ -63,7 +67,7 @@ export default class CitiesGame extends Game {
         this.history.push([player, city])
     }
 
-    private handleBotMove(cities, lastLetter = 'a'): string | void {
+    private handleBotMove(cities, lastLetter = 'a'): string {
         // TODO: implement random pick
         const city = cities?.[lastLetter]?.pop()
 
@@ -79,7 +83,9 @@ export default class CitiesGame extends Game {
         return city
     }
 
-    private handleBotLost(): void {
+    private handleBotLost(): string {
         this.update({ status: GameStatus.notStarted })
+
+        return BotReply.Lost
     }
 }
