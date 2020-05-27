@@ -1,3 +1,4 @@
+import rfdc from 'rfdc'
 import Game from './Game'
 import GameRecord from './GameRecord'
 
@@ -45,7 +46,7 @@ export default class CitiesGame extends Game {
             record = await this.gameRecord.add(
                 GameStatus.started,
                 this.history,
-                CITIES_MOCK
+                rfdc()(CITIES_MOCK)
             )
         }
 
@@ -64,7 +65,7 @@ export default class CitiesGame extends Game {
 
     private handleBotMove(cities, lastLetter = 'a'): string | void {
         // TODO: implement random pick
-        const city = cities?.[lastLetter].pop()
+        const city = cities?.[lastLetter]?.pop()
 
         if (!city) return this.handleBotLost()
 
