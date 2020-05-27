@@ -1,4 +1,4 @@
-import { Collection, InsertOneWriteOpResult } from 'mongodb'
+import { Collection } from 'mongodb'
 import Database from './Database'
 
 const GAME_RECORD_VALIDATOR = {

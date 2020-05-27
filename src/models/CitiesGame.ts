@@ -1,3 +1,4 @@
+import rfdc from 'rfdc'
 import Game from './Game'
 import GameRecord from './GameRecord'
 
@@ -5,6 +6,10 @@ const CITIES_MOCK: Cities = {
     a: ['aloha', 'ambient'],
     b: ['book', 'back', 'bright'],
     c: ['call', 'cell', 'city'],
+}
+
+const enum BotReply {
+    Lost = 'Я проиграл 😭',
 }
 
 export default class CitiesGame extends Game {
@@ -21,7 +26,7 @@ export default class CitiesGame extends Game {
         const gameItem = await this.get()
         const botMove = this.handleBotMove(gameItem?.cities)
 
-        return botMove || 'Я проиграл 😭'
+        return botMove
     }
 
     async status(): Promise<Partial<GameItem>> {
@@ -45,7 +50,7 @@ export default class CitiesGame extends Game {
             record = await this.gameRecord.add(
                 GameStatus.started,
                 this.history,
-                CITIES_MOCK
+                rfdc()(CITIES_MOCK)
             )
         }
 
@@ -62,9 +67,9 @@ export default class CitiesGame extends Game {
         this.history.push([player, city])
     }
 
-    private handleBotMove(cities, lastLetter = 'a'): string | void {
+    private handleBotMove(cities, lastLetter = 'a'): string {
         // TODO: implement random pick
-        const city = cities?.[lastLetter].pop()
+        const city = cities?.[lastLetter]?.pop()
 
         if (!city) return this.handleBotLost()
 
@@ -78,7 +83,9 @@ export default class CitiesGame extends Game {
         return city
     }
 
-    private handleBotLost(): void {
+    private handleBotLost(): string {
         this.update({ status: GameStatus.notStarted })
+
+        return BotReply.Lost
     }
 }
