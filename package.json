@@ -19,13 +19,15 @@
         "validate": "run-p check-types check-format lint"
     },
     "dependencies": {
+        "@types/rfdc": "^1.1.0",
         "dotenv": "^8.2.0",
         "express": "^4.17.1",
         "mongodb": "^3.5.7",
         "ngrok": "^3.2.7",
         "node-telegram-bot-api": "^0.40.0",
         "nodemon": "^2.0.3",
-        "path": "^0.12.7"
+        "path": "^0.12.7",
+        "rfdc": "^1.1.4"
     },
     "devDependencies": {
         "@types/express": "^4.17.6",
