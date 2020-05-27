@@ -8,7 +8,8 @@
         "skipLibCheck": true,
         "listEmittedFiles": true,
         "noEmitOnError": true,
-        "moduleResolution": "Node"
+        "moduleResolution": "Node",
+        "esModuleInterop": true
     },
     "include": ["src"],
     "exclude": ["node_modules"]

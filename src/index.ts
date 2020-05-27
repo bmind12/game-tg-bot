@@ -1,6 +1,6 @@
 require('dotenv').config()
-import * as express from 'express'
-import * as ngrok from 'ngrok'
+import express from 'express'
+import ngrok from 'ngrok'
 import './globals'
 import './app'
 
