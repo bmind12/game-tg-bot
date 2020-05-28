@@ -10,6 +10,7 @@ const CITIES_MOCK: Cities = {
 
 const enum BotReply {
     Lost = 'Я проиграл 😭',
+    AlreadyStarted = 'Игра уже началась, последний город был: ',
 }
 
 export default class CitiesGame extends Game {
@@ -24,6 +25,14 @@ export default class CitiesGame extends Game {
 
     async start(): Promise<string> {
         const gameItem = await this.get()
+        const citiesNamed = gameItem.history.length
+
+        if (citiesNamed > 0) {
+            return (
+                BotReply.AlreadyStarted + gameItem.history[citiesNamed - 1][1]
+            )
+        }
+
         const botMove = this.handleBotMove(gameItem?.cities)
 
         return botMove
