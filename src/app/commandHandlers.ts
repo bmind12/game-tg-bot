@@ -1,11 +1,20 @@
 import CitiesGame from '../models/CitiesGame'
-import { isBotCommand, handleBotCommand } from './helpers'
+import {
+    isBotCommand,
+    getBotCommandReply,
+    getLastCityFromHistory,
+} from './helpers'
 
 export const COMMANDS_REGEXP = new Map([
     ['start', new RegExp(/\/start/)],
     ['status', new RegExp(/\/status/)],
     ['end', new RegExp(/\/end/)],
     ['any', new RegExp(/.+/)],
+])
+
+const STATUS_REPLYES = new Map([
+    [GameStatus.started, 'Игра уже идет'],
+    [GameStatus.notStarted, 'Игра не началась'],
 ])
 
 const handleOnStart = (bot): CommandHandler => {
@@ -22,8 +31,19 @@ const handleOnStatus = (bot): CommandHandler => {
         const { id } = msg.chat
         const game = new CitiesGame(id)
         const { status, history } = await game.status()
+        const cities = history
+            .reduce((cities, item) => {
+                cities.push(item[1])
+                return cities
+            }, [])
+            .join(', ')
 
-        bot.sendMessage(id, `Status: game ${status}. Game history: ${history}`)
+        bot.sendMessage(
+            id,
+            `Статус игры: ${STATUS_REPLYES.get(
+                status
+            )}. Названные города: ${cities}`
+        )
     }
 }
 
@@ -38,19 +58,34 @@ const handleOnEnd = (bot): CommandHandler => {
 }
 
 const handleOnAny = (bot): CommandHandler => {
-    return (msg): void => {
+    return async (msg): Promise<void> => {
         const id = msg.chat.id
         const text = msg.text
+        let answer: string | void
 
-        if (isBotCommand(msg)) handleBotCommand(id, text, bot)
-        else {
-            bot.sendMessage(
-                id,
-                `Пожалуйста введи одну из доступных команд: /${Object.keys(
-                    COMMANDS_REGEXP
-                ).join(', /')}`
-            )
+        if (isBotCommand(msg)) {
+            answer = getBotCommandReply(text)
+        } else {
+            const game = new CitiesGame(id)
+            const { status, history } = await game.status()
+
+            if (status === GameStatus.notStarted) {
+                answer = BotReply.NotStartedYet
+            } else {
+                const lastCity = getLastCityFromHistory(history)
+                const lastLetter = lastCity[lastCity.length - 1].toUpperCase()
+
+                if (text[0].toUpperCase() !== lastLetter) {
+                    answer = BotReply.WrongLetter + lastLetter
+                } else {
+                    answer = await game.handleUserMove(text)
+                }
+            }
         }
+
+        if (!answer) return
+
+        bot.sendMessage(id, answer)
     }
 }
 

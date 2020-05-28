@@ -1,15 +1,13 @@
 import rfdc from 'rfdc'
 import Game from './Game'
 import GameRecord from './GameRecord'
+import { getLastCityFromHistory } from '../app/helpers'
 
 const CITIES_MOCK: Cities = {
     a: ['aloha', 'ambient'],
     b: ['book', 'back', 'bright'],
     c: ['call', 'cell', 'city'],
-}
-
-const enum BotReply {
-    Lost = 'Я проиграл 😭',
+    t: ['taoa', 'ttaob', 'ttaa', 'ttob', 'ttac', 'ttacb'],
 }
 
 export default class CitiesGame extends Game {
@@ -23,8 +21,16 @@ export default class CitiesGame extends Game {
     }
 
     async start(): Promise<string> {
-        const gameItem = await this.get()
-        const botMove = this.handleBotMove(gameItem?.cities)
+        const game = await this.get()
+        const citiesNamed = game.history.length
+
+        if (citiesNamed > 0) {
+            return (
+                BotReply.AlreadyStarted + getLastCityFromHistory(game.history)
+            )
+        }
+
+        const botMove = this.handleBotMove(game?.cities)
 
         return botMove
     }
@@ -63,29 +69,57 @@ export default class CitiesGame extends Game {
         await this.gameRecord.update(data)
     }
 
-    private updateHistory(player: Player, city: string): void {
+    private async updateHistory(
+        player: Player,
+        cities: Cities,
+        city: string
+    ): Promise<void> {
         this.history.push([player, city])
+
+        await this.update({
+            cities,
+            history: this.history,
+        })
     }
 
     private handleBotMove(cities, lastLetter = 'a'): string {
         // TODO: implement random pick
         const city = cities?.[lastLetter]?.pop()
 
-        if (!city) return this.handleBotLost()
+        if (!city) return this.handleLost(true)
 
-        this.updateHistory(Player.Bot, city)
-
-        this.update({
-            cities,
-            history: this.history,
-        })
+        this.updateHistory(Player.Bot, cities, city)
 
         return city
     }
 
-    private handleBotLost(): string {
+    private handleLost(botLost: boolean): string {
         this.update({ status: GameStatus.notStarted })
 
-        return BotReply.Lost
+        return botLost ? BotReply.Lost : BotReply.YouLost
+    }
+
+    async handleUserMove(city: string): Promise<string> {
+        const game = await this.get()
+        const firstLetter = city[0]
+        const cities = game.cities
+        const citiesOnLetter = game.cities[firstLetter.toLowerCase()]
+
+        if (!citiesOnLetter || citiesOnLetter.length === 0) {
+            return this.handleLost(false) + firstLetter.toUpperCase()
+        }
+
+        const cityIndex = citiesOnLetter.findIndex(
+            (cityItem) => city.toUpperCase() === cityItem.toUpperCase()
+        )
+
+        if (cityIndex === -1) {
+            return BotReply.NoSuchCity
+        }
+
+        const lastLetter = citiesOnLetter.splice(cityIndex, 1)[0].slice(-1)
+        await this.updateHistory(Player.User, cities, city)
+
+        return this.handleBotMove(cities, lastLetter)
     }
 }

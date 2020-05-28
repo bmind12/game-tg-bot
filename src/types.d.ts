@@ -4,6 +4,7 @@ declare global {
     interface Global {
         GameStatus?
         Player?
+        BotReply?
     }
 
     type CommandHandler = (msg: TelegramBot.Message) => void
