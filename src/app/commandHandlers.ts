@@ -77,6 +77,8 @@ const handleOnAny = (bot): CommandHandler => {
 
                 if (text[0].toUpperCase() !== lastLetter) {
                     answer = BotReply.WrongLetter + lastLetter
+                } else {
+                    answer = await game.handleUserMove(text)
                 }
             }
         }
