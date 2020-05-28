@@ -1,16 +1,12 @@
 import rfdc from 'rfdc'
 import Game from './Game'
 import GameRecord from './GameRecord'
+import { getLastCityFromHistory } from '../app/helpers'
 
 const CITIES_MOCK: Cities = {
     a: ['aloha', 'ambient'],
     b: ['book', 'back', 'bright'],
     c: ['call', 'cell', 'city'],
-}
-
-const enum BotReply {
-    Lost = 'Я проиграл 😭',
-    AlreadyStarted = 'Игра уже началась, последний город был: ',
 }
 
 export default class CitiesGame extends Game {
@@ -29,7 +25,8 @@ export default class CitiesGame extends Game {
 
         if (citiesNamed > 0) {
             return (
-                BotReply.AlreadyStarted + gameItem.history[citiesNamed - 1][1]
+                BotReply.AlreadyStarted +
+                getLastCityFromHistory(gameItem.history)
             )
         }
 

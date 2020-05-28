@@ -1,27 +1,27 @@
 import * as TelegramBot from 'node-telegram-bot-api'
 import { COMMANDS_REGEXP } from './commandHandlers'
 
-const BOT_COMMOND = 'bot_command'
+const BOT_COMMAND = 'bot_command'
 
 export function isBotCommand(msg: TelegramBot.Message): boolean {
-    return msg.entities?.[0]?.type === BOT_COMMOND
+    return msg.entities?.[0]?.type === BOT_COMMAND
 }
 
-export const handleBotCommand = (
-    id: number,
-    text: string,
-    bot: TelegramBot
-): void => {
+export const getBotCommandReply = (command: string): string | void => {
     let isValid = false
 
     for (const [key, regexp] of COMMANDS_REGEXP.entries()) {
         if (key === 'any') continue
 
-        if (regexp.test(text)) {
+        if (regexp.test(command)) {
             isValid = true
             break
         }
     }
 
-    if (!isValid) bot.sendMessage(id, 'я не знаю команду 😞')
+    if (!isValid) return BotReply.DontKnowCommand
+}
+
+export const getLastCityFromHistory = (history: GameHistory): string => {
+    return history[history.length - 1][1]
 }

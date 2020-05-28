@@ -1,5 +1,9 @@
 import CitiesGame from '../models/CitiesGame'
-import { isBotCommand, handleBotCommand } from './helpers'
+import {
+    isBotCommand,
+    getBotCommandReply,
+    getLastCityFromHistory,
+} from './helpers'
 
 export const COMMANDS_REGEXP = new Map([
     ['start', new RegExp(/\/start/)],
@@ -54,19 +58,32 @@ const handleOnEnd = (bot): CommandHandler => {
 }
 
 const handleOnAny = (bot): CommandHandler => {
-    return (msg): void => {
+    return async (msg): Promise<void> => {
         const id = msg.chat.id
         const text = msg.text
+        let answer: string | void
 
-        if (isBotCommand(msg)) handleBotCommand(id, text, bot)
-        else {
-            bot.sendMessage(
-                id,
-                `Пожалуйста введи одну из доступных команд: /${Object.keys(
-                    COMMANDS_REGEXP
-                ).join(', /')}`
-            )
+        if (isBotCommand(msg)) {
+            answer = getBotCommandReply(text)
+        } else {
+            const game = new CitiesGame(id)
+            const { status, history } = await game.status()
+
+            if (status === GameStatus.notStarted) {
+                answer = BotReply.NotStartedYet
+            } else {
+                const lastCity = getLastCityFromHistory(history)
+                const lastLetter = lastCity[lastCity.length - 1].toUpperCase()
+
+                if (text[0].toUpperCase() !== lastLetter) {
+                    answer = BotReply.WrongLetter + lastLetter
+                }
+            }
         }
+
+        if (!answer) return
+
+        bot.sendMessage(id, answer)
     }
 }
 
