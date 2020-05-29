@@ -16,7 +16,8 @@
         "check-types": "tsc --noEmit",
         "check-format": "npm run prettier -- --list-different",
         "format": "npm run prettier -- --write",
-        "validate": "run-p check-types check-format lint"
+        "validate": "run-p check-types check-format lint",
+        "cypress:open": "cypress open"
     },
     "dependencies": {
         "@types/rfdc": "^1.1.0",
@@ -35,6 +36,7 @@
         "@types/node-telegram-bot-api": "^0.40.3",
         "@typescript-eslint/eslint-plugin": "^2.32.0",
         "@typescript-eslint/parser": "^2.32.0",
+        "cypress": "^4.7.0",
         "eslint": "^7.0.0",
         "eslint-config-prettier": "^6.11.0",
         "husky": "^4.2.5",
