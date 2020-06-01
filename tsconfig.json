@@ -11,6 +11,6 @@
         "moduleResolution": "Node",
         "esModuleInterop": true
     },
-    "include": ["src", "cypress/integration/crawler/crawler_spec.js"],
-    "exclude": ["node_modules"]
+    "include": ["src"],
+    "exclude": ["node_modules", "cypress"]
 }
