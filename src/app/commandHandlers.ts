@@ -73,7 +73,11 @@ const handleOnAny = (bot): CommandHandler => {
                 answer = BotReply.NotStartedYet
             } else {
                 const lastCity = getLastCityFromHistory(history)
-                const lastLetter = lastCity[lastCity.length - 1].toUpperCase()
+                const lastLetter = lastCity
+                    .replace(/ \(.+\)/, '')
+                    .replace(/(ъ|ь)$/, '')
+                    .slice(-1)
+                    .toUpperCase()
 
                 if (text[0].toUpperCase() !== lastLetter) {
                     answer = BotReply.WrongLetter + lastLetter
