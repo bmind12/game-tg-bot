@@ -1,16 +1,18 @@
 import rfdc from 'rfdc'
 import Game from './Game'
 import GameRecord from './GameRecord'
+import CitiesRecord from './CitiesRecord'
 import { getLastCityFromHistory } from '../app/helpers'
 
-const CITIES_MOCK: Cities = {
-    a: ['aloha', 'ambient'],
-    b: ['book', 'back', 'bright'],
-    c: ['call', 'cell', 'city'],
-    t: ['taoa', 'ttaob', 'ttaa', 'ttob', 'ttac', 'ttacb'],
-}
-
 export default class CitiesGame extends Game {
+    static async init(): Promise<void> {
+        const citiesRecord = new CitiesRecord()
+
+        CitiesGame.citiesRecord = await citiesRecord.get()
+    }
+
+    static citiesRecord: Cities
+
     private gameRecord: GameRecord
     private history: GameHistory = []
 
@@ -56,7 +58,7 @@ export default class CitiesGame extends Game {
             record = await this.gameRecord.add(
                 GameStatus.started,
                 this.history,
-                rfdc()(CITIES_MOCK)
+                rfdc()(CitiesGame.citiesRecord)
             )
         }
 
@@ -82,9 +84,9 @@ export default class CitiesGame extends Game {
         })
     }
 
-    private handleBotMove(cities, lastLetter = 'a'): string {
+    private handleBotMove(cities, lastLetter = 'А'): string {
         // TODO: implement random pick
-        const city = cities?.[lastLetter]?.pop()
+        const city = cities?.[lastLetter.toUpperCase()]?.pop()
 
         if (!city) return this.handleLost(true)
 
@@ -103,7 +105,7 @@ export default class CitiesGame extends Game {
         const game = await this.get()
         const firstLetter = city[0]
         const cities = game.cities
-        const citiesOnLetter = game.cities[firstLetter.toLowerCase()]
+        const citiesOnLetter = game.cities[firstLetter.toUpperCase()]
 
         if (!citiesOnLetter || citiesOnLetter.length === 0) {
             return this.handleLost(false) + firstLetter.toUpperCase()
