@@ -2,6 +2,8 @@ import { COMMANDS_REGEXP, commandHandlers } from './commandHandlers'
 import Bot from '../models/Bot' // TODO: create module links
 import Database from '../models/Database'
 import GameRecord from '../models/GameRecord'
+import CitiesRecord from '../models/CitiesRecord'
+import CitiesGame from '../models/CitiesGame'
 
 const TOKEN = process.env.TELEGRAM_TOKEN
 const bot = new Bot(TOKEN, { polling: true })
@@ -10,6 +12,8 @@ const initGame = async (): Promise<void> => {
     try {
         await Database.init()
         await GameRecord.init()
+        await CitiesRecord.init()
+        await CitiesGame.init()
 
         bot.onText(
             COMMANDS_REGEXP.get('start'),
