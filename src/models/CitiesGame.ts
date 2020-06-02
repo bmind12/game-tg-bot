@@ -112,14 +112,20 @@ export default class CitiesGame extends Game {
         }
 
         const cityIndex = citiesOnLetter.findIndex(
-            (cityItem) => city.toUpperCase() === cityItem.toUpperCase()
+            (cityItem) =>
+                city.toUpperCase() ===
+                cityItem.replace(/ \(.+\)/, '').toUpperCase()
         )
 
         if (cityIndex === -1) {
             return BotReply.NoSuchCity
         }
 
-        const lastLetter = citiesOnLetter.splice(cityIndex, 1)[0].slice(-1)
+        const lastLetter = citiesOnLetter
+            .splice(cityIndex, 1)[0]
+            .replace(/ \(.+\)/, '')
+            .replace(/(ъ|ь)$/, '')
+            .slice(-1)
         await this.updateHistory(Player.User, cities, city)
 
         return this.handleBotMove(cities, lastLetter)
