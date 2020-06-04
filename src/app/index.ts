@@ -5,8 +5,14 @@ import GameRecord from '../models/GameRecord'
 import CitiesRecord from '../models/CitiesRecord'
 import CitiesGame from '../models/CitiesGame'
 
-const TOKEN = process.env.TELEGRAM_TOKEN
-const bot = new Bot(TOKEN, { polling: true })
+const token = process.env.TELEGRAM_TOKEN
+const port = process.env.PORT || 443
+const host = '0.0.0.0'
+const externalUrl =
+    process.env.CUSTOM_ENV_VARIABLE || 'https://igragorodabot.herokuapp.com'
+const bot = new Bot(token, { webHook: { port, host } })
+
+bot.setWebHook(externalUrl + ':443/bot' + token)
 
 const initGame = async (): Promise<void> => {
     try {
