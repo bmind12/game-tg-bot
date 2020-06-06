@@ -1,5 +1,5 @@
 import { Collection } from 'mongodb'
-import Database from './Database'
+import Database from './mongo/Database'
 
 const GAME_RECORD_VALIDATOR = {
     $jsonSchema: {

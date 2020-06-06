@@ -1,5 +1,5 @@
 import { Collection } from 'mongodb'
-import Database from './Database'
+import Database from './mongo/Database'
 
 export default class CitiesRecord {
     public static collection: Collection

@@ -1,6 +1,6 @@
 import TelegramBot from 'node-telegram-bot-api'
 import { COMMANDS_REGEXP, commandHandlers } from './commandHandlers'
-import Database from '../models/Database'
+import Database from '../models/mongo/Database'
 import GameRecord from '../models/GameRecord'
 import CitiesRecord from '../models/CitiesRecord'
 import CitiesGame from '../models/CitiesGame'
