@@ -1,6 +1,6 @@
 import { MongoClient, Db } from 'mongodb'
 
-const uri = `mongodb+srv://admin:${process.env.MONGO_ADMIN_PASSWORD}@${process.env.MONGO_DB_NAME}.mongodb.net/test?retryWrites=true&w=majority`
+const uri = `mongodb://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@ds257668.mlab.com:57668/${process.env.MONGO_USER}`
 
 export default class Database {
     public static instance: Db
@@ -12,6 +12,6 @@ export default class Database {
             useNewUrlParser: true,
             useUnifiedTopology: true,
         }).connect()
-        this.instance = await client.db('test')
+        this.instance = await client.db(process.env.MONGO_USER)
     }
 }

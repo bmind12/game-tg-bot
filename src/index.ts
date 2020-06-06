@@ -4,7 +4,6 @@ import './globals'
 import initApp from './app'
 import Bot from './models/Bot' // TODO: create module links
 
-// Heroku routes from port :443 to $PORT
 const url = process.env.URL || '0'
 const port = process.env.PORT || 8000
 const token = process.env.TELEGRAM_TOKEN
