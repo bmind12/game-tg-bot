@@ -1,10 +1,9 @@
 import rfdc from 'rfdc'
-import Game from './Game'
 import GameRecord from './GameRecord'
 import CitiesRecord from './CitiesRecord'
 import { getLastCityFromHistory } from '../app/helpers'
 
-export default class CitiesGame extends Game {
+export default class CitiesGame {
     static async init(): Promise<void> {
         const citiesRecord = new CitiesRecord()
 
@@ -17,8 +16,6 @@ export default class CitiesGame extends Game {
     private history: GameHistory = []
 
     constructor(id: number) {
-        super()
-
         this.gameRecord = new GameRecord(id)
     }
 
