@@ -1,58 +1,61 @@
-import { Collection, Db } from 'mongodb'
+import {
+    Collection,
+    Db,
+    FilterQuery,
+    OptionalId,
+    UpdateQuery,
+    WithId,
+} from 'mongodb'
 
 interface Validator {
     $jsonSchema: {}
 }
 
 export default class MongoCollection<T> {
-    constructor(public collection: Collection) {}
+    constructor(public collection: Collection<T>) {}
 
     static async init<T>(
         database: Db,
         name: string,
         validator: Validator
     ): Promise<MongoCollection<T>> {
-        const collection = await database.createCollection(name, {
+        const collection = await database.createCollection<T>(name, {
             validator,
         })
 
         return new MongoCollection(collection)
     }
 
-    async create(id: string, data: {}): Promise<T> {
+    async create(data: OptionalId<T>): Promise<WithId<T>> {
         try {
-            return (
-                await this.collection.insertOne({
-                    _id: id,
-                    ...data,
-                })
-            )?.ops?.[0] as T
+            return (await this.collection.insertOne(data))?.ops?.[0]
         } catch (error) {
             console.error(error)
         }
     }
 
-    async read(id: string): Promise<T> {
+    async read(filterQuery: FilterQuery<T>): Promise<T> {
         try {
-            return (await this.collection.findOne({
-                _id: id,
-            })) as T
+            return this.collection.findOne(filterQuery)
         } catch (error) {
             console.error(error)
         }
     }
 
-    async update(id: string, data: {}): Promise<void> {
+    async update(
+        filterQuery: FilterQuery<T>,
+        updateQuery: UpdateQuery<T> | Partial<T>
+    ): Promise<void> {
         try {
-            await this.collection.updateOne({ _id: id }, { $set: data })
+            await this.collection.updateOne(filterQuery, updateQuery)
         } catch (error) {
             console.error(error)
         }
     }
 
-    async delete(id: string): Promise<void> {
+    async delete(filterQuery: FilterQuery<T>): Promise<void> {
         try {
-            await this.collection.deleteOne({ _id: id })
+            await this.collection.deleteOne(filterQuery)
         } catch (error) {
             console.error(error)
         }
