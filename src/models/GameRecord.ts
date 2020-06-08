@@ -1,55 +1,18 @@
-import { Collection } from 'mongodb'
-import Database from './mongo/Database'
+import MongoCollection from './mongo/Collection'
 
-const GAME_RECORD_VALIDATOR = {
-    $jsonSchema: {
-        bsonType: 'object',
-        required: ['_id', 'status', 'history'],
-        properties: {
-            _id: {
-                bsonType: 'number',
-                description: 'must be a string and is required',
-            },
-            status: {
-                enum: Object.values(GameStatus),
-                description: 'must be a string and is required',
-            },
-            cities: {
-                bsonType: 'object',
-            },
-            history: {
-                bsonType: 'array',
-            },
-        },
-    },
-}
+export default class GameRecord {
+    private static collection: MongoCollection<GameItem>
 
-class GameRecord {
-    // TODO: add another abstraction to communicate with Mongo
-    public static collection: Collection
+    private constructor(private _id: number) {}
 
-    constructor(private id: number) {}
-
-    static async init(): Promise<void> {
-        this.collection = await Database.instance.createCollection(
-            'game-record',
-            {
-                validator: GAME_RECORD_VALIDATOR,
-            }
-        )
-    }
-
-    async get(): Promise<GameItem> {
-        try {
-            const record = (await GameRecord.collection.findOne({
-                _id: this.id,
-            })) as GameItem
-            record
-
-            return record
-        } catch (error) {
-            console.error(error)
+    static async build(id: number): Promise<GameRecord> {
+        if (!GameRecord.collection) {
+            GameRecord.collection = await MongoCollection.init(
+                CollectionName.Games
+            )
         }
+
+        return new GameRecord(id)
     }
 
     async add(
@@ -57,38 +20,23 @@ class GameRecord {
         history: GameHistory,
         cities?: Cities
     ): Promise<GameItem> {
-        try {
-            const result = await GameRecord.collection.insertOne({
-                _id: this.id,
-                status,
-                history,
-                cities,
-            })
+        return await GameRecord.collection.create({
+            _id: this._id,
+            status,
+            history,
+            cities,
+        })
+    }
 
-            return result?.ops?.[0]
-        } catch (error) {
-            console.error(error)
-        }
+    async get(): Promise<GameItem> {
+        return await GameRecord.collection.read({ _id: this._id })
     }
 
     async update(data): Promise<void> {
-        try {
-            await GameRecord.collection.updateOne(
-                { _id: this.id },
-                { $set: data }
-            )
-        } catch (error) {
-            console.error(error)
-        }
+        await GameRecord.collection.update({ _id: this._id }, { $set: data })
     }
 
     async delete(): Promise<void> {
-        try {
-            await GameRecord.collection.deleteOne({ _id: this.id })
-        } catch (error) {
-            console.error(error)
-        }
+        await GameRecord.collection.delete({ _id: this._id })
     }
 }
-
-export default GameRecord

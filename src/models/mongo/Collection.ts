@@ -1,29 +1,25 @@
 import {
     Collection,
-    Db,
+    Cursor,
     FilterQuery,
     OptionalId,
     UpdateQuery,
     WithId,
 } from 'mongodb'
-
-interface Validator {
-    $jsonSchema: {}
-}
+import Database from './Database'
+import Validators from './Validators'
 
 export default class MongoCollection<T> {
-    constructor(public collection: Collection<T>) {}
+    private constructor(public collection: Collection<T>) {}
 
-    static async init<T>(
-        database: Db,
-        name: string,
-        validator: Validator
-    ): Promise<MongoCollection<T>> {
-        const collection = await database.createCollection<T>(name, {
-            validator,
+    static async init<T>(name: CollectionName): Promise<MongoCollection<T>> {
+        await Database.init()
+
+        const collection = await Database.instance.createCollection<T>(name, {
+            validator: Validators.get(CollectionName[name]),
         })
 
-        return new MongoCollection(collection)
+        return new MongoCollection<T>(collection)
     }
 
     async create(data: OptionalId<T>): Promise<WithId<T>> {
@@ -56,6 +52,14 @@ export default class MongoCollection<T> {
     async delete(filterQuery: FilterQuery<T>): Promise<void> {
         try {
             await this.collection.deleteOne(filterQuery)
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    async find(filterQuery: FilterQuery<T>): Promise<Cursor<T>> {
+        try {
+            return await this.collection.find(filterQuery)
         } catch (error) {
             console.error(error)
         }

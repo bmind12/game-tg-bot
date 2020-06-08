@@ -12,7 +12,8 @@
         "eslint-config-prettier/@typescript-eslint"
     ],
     "rules": {
-        "strict": ["error", "never"]
+        "strict": ["error", "never"],
+        "@typescript-eslint/no-empty-function": "off"
     },
     "ignorePatterns": ["*.js"]
 }

@@ -1,4 +1,4 @@
-import CitiesGame from '../models/CitiesGame'
+import Game from '../models/Game'
 import {
     isBotCommand,
     getBotCommandReply,
@@ -20,7 +20,7 @@ const STATUS_REPLYES = new Map([
 const handleOnStart = (bot): CommandHandler => {
     return async (msg): Promise<void> => {
         const { id } = msg.chat
-        const game = new CitiesGame(id)
+        const game = await Game.build(id)
 
         bot.sendMessage(id, await game.start())
     }
@@ -29,7 +29,7 @@ const handleOnStart = (bot): CommandHandler => {
 const handleOnStatus = (bot): CommandHandler => {
     return async (msg): Promise<void> => {
         const { id } = msg.chat
-        const game = new CitiesGame(id)
+        const game = await Game.build(id)
         const { status, history } = await game.status()
         const cities = history
             .reduce((cities, item) => {
@@ -48,9 +48,9 @@ const handleOnStatus = (bot): CommandHandler => {
 }
 
 const handleOnEnd = (bot): CommandHandler => {
-    return (msg): void => {
+    return async (msg): Promise<void> => {
         const { id, first_name: name } = msg.chat
-        const game = new CitiesGame(id)
+        const game = await Game.build(id)
 
         game.end()
         bot.sendMessage(id, `Game ended, ${name}`)
@@ -66,7 +66,7 @@ const handleOnAny = (bot): CommandHandler => {
         if (isBotCommand(msg)) {
             answer = getBotCommandReply(text)
         } else {
-            const game = new CitiesGame(id)
+            const game = await Game.build(id)
             const { status, history } = await game.status()
 
             if (status === GameStatus.notStarted) {

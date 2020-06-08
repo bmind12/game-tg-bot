@@ -1,17 +1,18 @@
-import { MongoClient, Db } from 'mongodb'
+import { Db, MongoClient } from 'mongodb'
 
-const uri = `mongodb://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@ds257668.mlab.com:57668/${process.env.MONGO_USER}`
+const URI = `mongodb://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@ds257668.mlab.com:57668/${process.env.MONGO_USER}`
 
-export default class Database {
-    public static instance: Db
-
-    constructor(public db: Db) {}
+export default class MongoDatabase {
+    static instance: Db
 
     static async init(): Promise<void> {
-        const client = await new MongoClient(uri, {
+        if (MongoDatabase.instance) return
+
+        const client = await new MongoClient(URI, {
             useNewUrlParser: true,
             useUnifiedTopology: true,
         }).connect()
-        this.instance = await client.db(process.env.MONGO_USER)
+
+        MongoDatabase.instance = await client.db(process.env.MONGO_USER)
     }
 }
