@@ -1,33 +1,31 @@
-import Game from '../models/Game'
+import TelegramBot from 'node-telegram-bot-api'
+import Game from './Game'
 import {
     isBotCommand,
     getBotCommandReply,
     getLastCityFromHistory,
-} from './helpers'
-
-export const COMMANDS_REGEXP = new Map([
-    ['start', new RegExp(/\/start/)],
-    ['status', new RegExp(/\/status/)],
-    ['end', new RegExp(/\/end/)],
-    ['any', new RegExp(/.+/)],
-])
+} from '../app/helpers'
 
 const STATUS_REPLYES = new Map([
     [GameStatus.started, 'Игра уже идет'],
     [GameStatus.notStarted, 'Игра не началась'],
 ])
 
-const handleOnStart = (bot): CommandHandler => {
-    return async (msg): Promise<void> => {
+export default class CommandHandler {
+    private static bot: TelegramBot
+
+    static init(bot): void {
+        CommandHandler.bot = bot
+    }
+
+    static async onStart(msg): Promise<void> {
         const { id } = msg.chat
         const game = await Game.build(id)
 
-        bot.sendMessage(id, await game.start())
+        CommandHandler.bot.sendMessage(id, await game.start())
     }
-}
 
-const handleOnStatus = (bot): CommandHandler => {
-    return async (msg): Promise<void> => {
+    static async onStatus(msg): Promise<void> {
         const { id } = msg.chat
         const game = await Game.build(id)
         const { status, history } = await game.status()
@@ -38,27 +36,23 @@ const handleOnStatus = (bot): CommandHandler => {
             }, [])
             .join(', ')
 
-        bot.sendMessage(
+        CommandHandler.bot.sendMessage(
             id,
             `Статус игры: ${STATUS_REPLYES.get(
                 status
             )}. Названные города: ${cities}`
         )
     }
-}
 
-const handleOnEnd = (bot): CommandHandler => {
-    return async (msg): Promise<void> => {
+    static async onEnd(msg): Promise<void> {
         const { id, first_name: name } = msg.chat
         const game = await Game.build(id)
 
         game.end()
-        bot.sendMessage(id, `Game ended, ${name}`)
+        CommandHandler.bot.sendMessage(id, `Game ended, ${name}`)
     }
-}
 
-const handleOnAny = (bot): CommandHandler => {
-    return async (msg): Promise<void> => {
+    static async onAny(msg): Promise<void> {
         const id = msg.chat.id
         const text = msg.text
         let answer: string | void
@@ -89,13 +83,6 @@ const handleOnAny = (bot): CommandHandler => {
 
         if (!answer) return
 
-        bot.sendMessage(id, answer)
+        CommandHandler.bot.sendMessage(id, answer)
     }
 }
-
-export const commandHandlers = new Map([
-    [COMMANDS_REGEXP.get('start'), handleOnStart],
-    [COMMANDS_REGEXP.get('status'), handleOnStatus],
-    [COMMANDS_REGEXP.get('end'), handleOnEnd],
-    [COMMANDS_REGEXP.get('any'), handleOnAny],
-])
