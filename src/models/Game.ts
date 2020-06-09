@@ -1,22 +1,23 @@
 import rfdc from 'rfdc'
 import GameRecord from './GameRecord'
-import CitiesRecord from './CitiesRecord'
+import CitiesCollection from './CitiesCollection'
 import { getLastCityFromHistory } from '../app/helpers'
 
-export default class CitiesGame {
-    static async init(): Promise<void> {
-        const citiesRecord = new CitiesRecord()
-
-        CitiesGame.citiesRecord = await citiesRecord.get()
-    }
-
-    static citiesRecord: Cities
-
+export default class Game {
+    private static cities: Cities
     private gameRecord: GameRecord
     private history: GameHistory = []
 
-    constructor(id: number) {
-        this.gameRecord = new GameRecord(id)
+    private constructor(gameRecord: GameRecord) {
+        this.gameRecord = gameRecord
+    }
+
+    static async build(id): Promise<Game> {
+        if (!Game.cities) {
+            Game.cities = await CitiesCollection.get()
+        }
+
+        return new Game(await GameRecord.build(id))
     }
 
     async start(): Promise<string> {
@@ -55,7 +56,7 @@ export default class CitiesGame {
             record = await this.gameRecord.add(
                 GameStatus.started,
                 this.history,
-                rfdc()(CitiesGame.citiesRecord)
+                rfdc()(Game.cities)
             )
         }
 

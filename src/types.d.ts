@@ -1,16 +1,22 @@
 import TelegramBot from 'node-telegram-bot-api'
-
+import { Db } from 'mongodb'
 declare global {
     interface Global {
+        BotReply?
+        CollectionName?
         GameStatus?
         Player?
-        BotReply?
     }
 
     type CommandHandler = (msg: TelegramBot.Message) => void
 
     type Cities = {
         [key: string]: string[]
+    }
+
+    type CitiesItem = {
+        _id: string
+        cities: string[]
     }
 
     interface GameItem {
@@ -21,4 +27,10 @@ declare global {
     }
 
     type GameHistory = [Player, string][]
+
+    namespace Mongo {
+        interface Validator {
+            $jsonSchema: {}
+        }
+    }
 }

@@ -1,13 +1,3 @@
-enum GameStatus {
-    started = 'started',
-    notStarted = 'notStarted',
-}
-
-enum Player {
-    Bot,
-    User,
-}
-
 enum BotReply {
     Lost = 'Я проиграл 😭',
     AlreadyStarted = 'Игра уже началась, последний город был: ',
@@ -18,6 +8,22 @@ enum BotReply {
     YouLost = 'Ты проиграл, больше нет городов на букву ',
 }
 
+enum CollectionName {
+    Cities = 'cities',
+    Games = 'games',
+}
+
+enum GameStatus {
+    started = 'started',
+    notStarted = 'notStarted',
+}
+
+enum Player {
+    Bot,
+    User,
+}
+
+;(global as Global).BotReply = BotReply
+;(global as Global).CollectionName = CollectionName
 ;(global as Global).GameStatus = GameStatus
 ;(global as Global).Player = Player
-;(global as Global).BotReply = BotReply
