@@ -14,9 +14,6 @@ export default class Validators {
                         enum: Object.values(GameStatus),
                         description: 'must be a string and is required',
                     },
-                    cities: {
-                        bsonType: 'object',
-                    },
                     history: {
                         bsonType: 'array',
                     },
