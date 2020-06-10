@@ -15,16 +15,11 @@ export default class GameRecord {
         return new GameRecord(id)
     }
 
-    async add(
-        status: GameStatus,
-        history: GameHistory,
-        cities?: Cities
-    ): Promise<GameItem> {
+    async add(status: GameStatus, history: GameHistory): Promise<GameItem> {
         return await GameRecord.collection.create({
             _id: this._id,
             status,
             history,
-            cities,
         })
     }
 

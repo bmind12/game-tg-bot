@@ -5,6 +5,7 @@ import { getLastCityFromHistory } from '../app/helpers'
 
 export default class Game {
     private static cities: Cities
+    private remainingCities: Cities
     private gameRecord: GameRecord
     private history: GameHistory = []
 
@@ -30,7 +31,11 @@ export default class Game {
             )
         }
 
-        const botMove = this.handleBotMove(game?.cities)
+        if (game.status === GameStatus.notStarted) {
+            await this.update({ status: GameStatus.started })
+        }
+
+        const botMove = this.handleBotMove()
 
         return botMove
     }
@@ -54,13 +59,13 @@ export default class Game {
 
         if (!record) {
             record = await this.gameRecord.add(
-                GameStatus.started,
-                this.history,
-                rfdc()(Game.cities)
+                GameStatus.notStarted,
+                this.history
             )
         }
 
         this.history = record.history
+        this.remainingCities = this.getRemainingCities()
 
         return record
     }
@@ -69,26 +74,21 @@ export default class Game {
         await this.gameRecord.update(data)
     }
 
-    private async updateHistory(
-        player: Player,
-        cities: Cities,
-        city: string
-    ): Promise<void> {
+    private async updateHistory(player: Player, city: string): Promise<void> {
         this.history.push([player, city])
 
         await this.update({
-            cities,
             history: this.history,
         })
     }
 
-    private handleBotMove(cities, lastLetter = 'А'): string {
+    private handleBotMove(lastLetter = 'А'): string {
         // TODO: implement random pick
-        const city = cities?.[lastLetter.toUpperCase()]?.pop()
+        const city = this.remainingCities[lastLetter.toUpperCase()]?.pop()
 
         if (!city) return this.handleLost(true)
 
-        this.updateHistory(Player.Bot, cities, city)
+        this.updateHistory(Player.Bot, city)
 
         return city
     }
@@ -100,10 +100,8 @@ export default class Game {
     }
 
     async handleUserMove(city: string): Promise<string> {
-        const game = await this.get()
         const firstLetter = city[0]
-        const cities = game.cities
-        const citiesOnLetter = game.cities[firstLetter.toUpperCase()]
+        const citiesOnLetter = this.remainingCities[firstLetter.toUpperCase()]
 
         if (!citiesOnLetter || citiesOnLetter.length === 0) {
             return this.handleLost(false) + firstLetter.toUpperCase()
@@ -124,8 +122,25 @@ export default class Game {
             .replace(/ \(.+\)/, '')
             .replace(/(ъ|ь)$/, '')
             .slice(-1)
-        await this.updateHistory(Player.User, cities, city)
 
-        return this.handleBotMove(cities, lastLetter)
+        await this.updateHistory(Player.User, city)
+
+        return this.handleBotMove(lastLetter)
+    }
+
+    private getRemainingCities(): Cities {
+        const cities = rfdc()(Game.cities)
+
+        if (this.history.length) {
+            this.history.forEach((historyItem: HistoryItem): void => {
+                const city = historyItem[1]
+                const firstLetter = city[0]
+                const index = cities[firstLetter].indexOf(city)
+
+                cities[firstLetter].splice(index, 1)
+            })
+        }
+
+        return cities
     }
 }

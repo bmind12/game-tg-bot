@@ -5,7 +5,7 @@ export default class CitiesCollection {
 
     private static async init(): Promise<void> {
         CitiesCollection.collection = await MongoCollection.init(
-            CollectionName.Games
+            CollectionName.Cities
         )
     }
 
