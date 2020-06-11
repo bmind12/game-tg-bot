@@ -9,8 +9,8 @@ enum BotReply {
 }
 
 enum CollectionName {
-    Cities = 'cities',
-    Games = 'games',
+    Cities = 'Cities',
+    Games = 'Games',
 }
 
 enum GameStatus {

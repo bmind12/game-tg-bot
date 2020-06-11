@@ -11,15 +11,13 @@ declare global {
     type CommandHandler = (msg: TelegramBot.Message) => void
 
     interface Cities {
-        [key: FirstLetter]: City[]
+        [key: string]: string[]
     }
 
     type CitiesItem = {
         _id: string
-        cities: City[]
+        cities: string[]
     }
-
-    type City = string
 
     interface GameItem {
         _id: number
@@ -29,9 +27,7 @@ declare global {
 
     type GameHistory = HistoryItem[]
 
-    type HistoryItem = [Player, City]
-
-    type FirstLetter = string
+    type HistoryItem = [Player, string]
 
     namespace Mongo {
         interface Validator {

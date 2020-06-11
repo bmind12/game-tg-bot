@@ -5,7 +5,7 @@ import { getLastCityFromHistory } from '../app/helpers'
 
 export default class Game {
     private static cities: Cities
-    private remainingCities: Cities
+    private remainingCities!: Cities
     private gameRecord: GameRecord
     private history: GameHistory = []
 
@@ -13,16 +13,23 @@ export default class Game {
         this.gameRecord = gameRecord
     }
 
-    static async build(id): Promise<Game> {
+    static async build(id: number): Promise<Game | undefined> {
         if (!Game.cities) {
-            Game.cities = await CitiesCollection.get()
+            const cities = await CitiesCollection.get()
+
+            if (!cities) return
+
+            Game.cities = cities
         }
 
         return new Game(await GameRecord.build(id))
     }
 
-    async start(): Promise<string> {
+    async start(): Promise<string | undefined> {
         const game = await this.get()
+
+        if (!game) return
+
         const citiesNamed = game.history.length
 
         if (citiesNamed > 0) {
@@ -40,9 +47,13 @@ export default class Game {
         return botMove
     }
 
-    async status(): Promise<Partial<GameItem>> {
+    async status(): Promise<Partial<GameItem> | undefined> {
         try {
-            const { status, history } = await this.get()
+            const game = await this.get()
+
+            if (!game) return
+
+            const { status, history } = game
 
             return { history, status }
         } catch (error) {
@@ -54,7 +65,7 @@ export default class Game {
         await this.gameRecord.delete()
     }
 
-    private async get(): Promise<GameItem> {
+    private async get(): Promise<GameItem | undefined> {
         let record = await this.gameRecord.get()
 
         if (!record) {
@@ -63,6 +74,8 @@ export default class Game {
                 this.history
             )
         }
+
+        if (!record) return
 
         this.history = record.history
         this.remainingCities = this.getRemainingCities()
@@ -100,8 +113,8 @@ export default class Game {
     }
 
     async handleUserMove(city: string): Promise<string> {
-        const firstLetter = city[0]
-        const citiesOnLetter = this.remainingCities[firstLetter.toUpperCase()]
+        const firstLetter = city[0].toUpperCase()
+        const citiesOnLetter = this.remainingCities[firstLetter]
 
         if (!citiesOnLetter || citiesOnLetter.length === 0) {
             return this.handleLost(false) + firstLetter.toUpperCase()

@@ -9,10 +9,13 @@ const url = process.env.URL || '0'
 const port = process.env.PORT || 8000
 const token = process.env.TELEGRAM_TOKEN
 const options = url === '0' ? { polling: true } : { webHook: { port: +port } }
-const bot = new TelegramBot(token, options)
 
-if (options.webHook) bot.setWebHook(`${url}/bot${token}`)
+if (token) {
+    const bot = new TelegramBot(token, options)
 
-if (url === '0') ngrok.connect(+port)
+    if (options.webHook) bot.setWebHook(`${url}/bot${token}`)
 
-App.init(bot)
+    if (url === '0') ngrok.connect(+port)
+
+    App.init(bot)
+}

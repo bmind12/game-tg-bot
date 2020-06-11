@@ -14,16 +14,18 @@ export default class CitiesCollection {
             cities[letterRecord._id] = letterRecord.cities
 
             return cities
-        }, {})
+        }, {} as Cities)
     }
 
-    static async get(): Promise<Cities> {
+    static async get(): Promise<Cities | undefined> {
         if (!CitiesCollection.collection) {
             await CitiesCollection.init()
         }
 
         const cursor = await CitiesCollection.collection.find({})
         const records = await cursor?.toArray()
+
+        if (!records) return
 
         return CitiesCollection.serilazeRecords(records)
     }

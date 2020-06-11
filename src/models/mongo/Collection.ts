@@ -22,7 +22,7 @@ export default class MongoCollection<T> {
         return new MongoCollection<T>(collection)
     }
 
-    async create(data: OptionalId<T>): Promise<WithId<T>> {
+    async create(data: OptionalId<T>): Promise<WithId<T> | undefined> {
         try {
             return (await this.collection.insertOne(data))?.ops?.[0]
         } catch (error) {
@@ -30,7 +30,7 @@ export default class MongoCollection<T> {
         }
     }
 
-    async read(filterQuery: FilterQuery<T>): Promise<T> {
+    async read(filterQuery: FilterQuery<T>): Promise<T | null | undefined> {
         try {
             return this.collection.findOne(filterQuery)
         } catch (error) {
@@ -57,7 +57,7 @@ export default class MongoCollection<T> {
         }
     }
 
-    async find(filterQuery: FilterQuery<T>): Promise<Cursor<T>> {
+    async find(filterQuery: FilterQuery<T>): Promise<Cursor<T> | undefined> {
         try {
             return await this.collection.find(filterQuery)
         } catch (error) {

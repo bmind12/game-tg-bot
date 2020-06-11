@@ -15,7 +15,10 @@ export default class GameRecord {
         return new GameRecord(id)
     }
 
-    async add(status: GameStatus, history: GameHistory): Promise<GameItem> {
+    async add(
+        status: GameStatus,
+        history: GameHistory
+    ): Promise<GameItem | undefined> {
         return await GameRecord.collection.create({
             _id: this._id,
             status,
@@ -23,11 +26,11 @@ export default class GameRecord {
         })
     }
 
-    async get(): Promise<GameItem> {
+    async get(): Promise<GameItem | null | undefined> {
         return await GameRecord.collection.read({ _id: this._id })
     }
 
-    async update(data): Promise<void> {
+    async update(data: {}): Promise<void> {
         await GameRecord.collection.update({ _id: this._id }, { $set: data })
     }
 
