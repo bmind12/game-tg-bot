@@ -2,6 +2,7 @@ import rfdc from 'rfdc'
 import GameRecord from './GameRecord'
 import CitiesCollection from './CitiesCollection'
 import { getLastCityFromHistory } from '../app/helpers'
+import { getRandomCharFromRange } from '../utils/random'
 
 export default class Game {
     private static cities: Cities
@@ -95,8 +96,9 @@ export default class Game {
         })
     }
 
-    private handleBotMove(lastLetter = 'А'): string {
-        // TODO: implement random pick
+    private handleBotMove(
+        lastLetter = getRandomCharFromRange('А', 'Я')
+    ): string {
         const city = this.remainingCities[lastLetter.toUpperCase()]?.pop()
 
         if (!city) return this.handleLost(true)
