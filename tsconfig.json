@@ -9,7 +9,8 @@
         "listEmittedFiles": true,
         "noEmitOnError": true,
         "moduleResolution": "Node",
-        "esModuleInterop": true
+        "esModuleInterop": true,
+        "strict": true
     },
     "include": ["src"],
     "exclude": ["node_modules", "cypress"]

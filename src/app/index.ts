@@ -2,11 +2,18 @@ import TelegramBot from 'node-telegram-bot-api'
 import CommandHandler from '../models/CommandHandler'
 import Database from '../models/mongo/Database'
 
+enum GameCommand {
+    Any = 'any',
+    End = 'end',
+    Start = 'start',
+    Status = 'status',
+}
+
 export const COMMANDS_REGEXP = new Map([
-    ['start', new RegExp(/\/start/)],
-    ['status', new RegExp(/\/status/)],
-    ['end', new RegExp(/\/end/)],
-    ['any', new RegExp(/.+/)],
+    [GameCommand.Start, new RegExp(/\/start/)],
+    [GameCommand.Status, new RegExp(/\/status/)],
+    [GameCommand.End, new RegExp(/\/end/)],
+    [GameCommand.Any, new RegExp(/.+/)],
 ])
 
 export default class App {
@@ -22,9 +29,25 @@ export default class App {
     }
 
     private static initBotCommands(bot: TelegramBot): void {
-        bot.onText(COMMANDS_REGEXP.get('start'), CommandHandler.onStart)
-        bot.onText(COMMANDS_REGEXP.get('status'), CommandHandler.onStatus)
-        bot.onText(COMMANDS_REGEXP.get('end'), CommandHandler.onEnd)
-        bot.onText(COMMANDS_REGEXP.get('any'), CommandHandler.onAny)
+        const startRegExp = COMMANDS_REGEXP.get(GameCommand.Start)
+        const statusRegExp = COMMANDS_REGEXP.get(GameCommand.Status)
+        const endRegExp = COMMANDS_REGEXP.get(GameCommand.End)
+        const anyRegExp = COMMANDS_REGEXP.get(GameCommand.Any)
+
+        if (startRegExp) {
+            bot.onText(startRegExp, CommandHandler.onStart)
+        }
+
+        if (statusRegExp) {
+            bot.onText(statusRegExp, CommandHandler.onStatus)
+        }
+
+        if (endRegExp) {
+            bot.onText(endRegExp, CommandHandler.onEnd)
+        }
+
+        if (anyRegExp) {
+            bot.onText(anyRegExp, CommandHandler.onAny)
+        }
     }
 }
