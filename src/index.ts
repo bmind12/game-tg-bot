@@ -1,4 +1,4 @@
-require('dotenv').config()
+import 'dotenv/config.js'
 import './globals'
 import App from './app'
 import TelegramBot from 'node-telegram-bot-api'
