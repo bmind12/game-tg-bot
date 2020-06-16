@@ -1,6 +1,6 @@
 const path = require('path')
 const { ContextReplacementPlugin } = require('webpack')
-
+// TODO: shrink build size
 module.exports = {
     mode: 'development', // TODO: make dynamic
     entry: ['@babel/polyfill', './src/index.ts'],

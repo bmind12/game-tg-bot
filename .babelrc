@@ -11,5 +11,19 @@
             }
         ],
         "@babel/preset-typescript"
+    ],
+    "plugins": [
+        [
+            "module-resolver",
+            {
+                "root": ["."],
+                "alias": {
+                    "test": "./src/test",
+                    "app": "./src/app",
+                    "models": "./src/models",
+                    "utils": "./src/utils"
+                }
+            }
+        ]
     ]
 }

@@ -1,8 +1,7 @@
 import 'dotenv/config.js'
 import './globals'
-import App from './app'
+import App from 'app'
 import TelegramBot from 'node-telegram-bot-api'
-// TODO: create module links
 
 const url = process.env.URL
 const port = process.env.PORT || 8000
