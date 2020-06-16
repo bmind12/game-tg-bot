@@ -1,4 +1,5 @@
 const path = require('path')
+const { ContextReplacementPlugin } = require('webpack')
 
 module.exports = {
     mode: 'development', // TODO: make dynamic
@@ -30,6 +31,7 @@ module.exports = {
             },
         ],
     },
+    plugins: [new ContextReplacementPlugin(/require_optional/)],
     resolve: {
         extensions: ['.ts', 'tsx', '.js'],
     },
