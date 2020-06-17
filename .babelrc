@@ -1,17 +1,5 @@
 {
-    "presets": [
-        [
-            "@babel/preset-env",
-            {
-                "useBuiltIns": "usage",
-                "corejs": {
-                    "version": 3,
-                    "proposals": true
-                }
-            }
-        ],
-        "@babel/preset-typescript"
-    ],
+    "presets": ["@babel/preset-typescript"],
     "plugins": [
         [
             "module-resolver",
