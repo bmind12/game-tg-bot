@@ -1,5 +1,5 @@
 import TelegramBot from 'node-telegram-bot-api'
-import { COMMANDS_REGEXP } from './index'
+import { COMMANDS_REGEXP } from 'app'
 
 const BOT_COMMAND = 'bot_command'
 

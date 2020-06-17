@@ -1,8 +1,8 @@
 import rfdc from 'rfdc'
-import GameRecord from './GameRecord'
-import CitiesCollection from './CitiesCollection'
-import { getLastCityFromHistory } from '../app/helpers'
-import { getRandomCharFromRange } from '../utils/random'
+import GameRecord from 'models/GameRecord'
+import CitiesCollection from 'models/CitiesCollection'
+import { getLastCityFromHistory } from 'app/helpers'
+import { getRandomCharFromRange } from 'utils/random'
 
 export default class Game {
     private static cities: Cities

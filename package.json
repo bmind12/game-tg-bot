@@ -9,12 +9,12 @@
         "npm": "6.14.x"
     },
     "scripts": {
-        "start": "node dist/index.js",
-        "dev": "npm run build && run-p watch:**",
-        "watch:src": "tsc --watch",
-        "watch:dist": "nodemon --inspect dist/index.js",
+        "start": "node dist/main.js",
+        "dev": "run-p watch:**",
+        "watch:src": "webpack --watch",
+        "watch:dist": "nodemon --inspect dist/main.js",
         "clean": "rm -rf dist",
-        "build": "npm run clean && tsc",
+        "build": "npm run clean && webpack",
         "lint": "eslint --ignore-path .gitignore . --ext .ts",
         "prettier": "prettier --ignore-path .gitignore \"**/*.+(js|json|ts)\"",
         "check-types": "tsc --noEmit",
@@ -24,8 +24,10 @@
         "cypress:open": "cypress open"
     },
     "dependencies": {
+        "core-js": "3.6.5",
         "dotenv": "8.2.0",
         "mongodb": "3.5.7",
+        "mongodb-client-encryption": "1.0.1",
         "node-telegram-bot-api": "0.40.0",
         "path": "0.12.7",
         "rfdc": "1.1.4"

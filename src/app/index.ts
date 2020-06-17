@@ -1,6 +1,6 @@
 import TelegramBot from 'node-telegram-bot-api'
-import CommandHandler from '../models/CommandHandler'
-import Database from '../models/mongo/Database'
+import CommandHandler from 'models/CommandHandler'
+import Database from 'models/mongo/Database'
 
 enum GameCommand {
     Any = 'any',

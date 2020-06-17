@@ -1,10 +1,10 @@
 import TelegramBot from 'node-telegram-bot-api'
-import Game from './Game'
+import Game from 'models/Game'
 import {
     isBotCommand,
     getBotCommandReply,
     getLastCityFromHistory,
-} from '../app/helpers'
+} from 'app/helpers'
 
 const STATUS_REPLYES = new Map([
     [GameStatus.started, 'Игра уже идет'],

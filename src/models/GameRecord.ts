@@ -1,4 +1,4 @@
-import MongoCollection from './mongo/Collection'
+import MongoCollection from 'models/mongo/Collection'
 
 export default class GameRecord {
     private static collection: MongoCollection<GameItem>
