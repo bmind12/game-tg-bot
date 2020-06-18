@@ -6,7 +6,7 @@ It is written in TypeScript and it follows OOP principles. It uses Cypress to sc
 To make it work use an `.env-sample` file as a guide on how to get and name global vars on Heroku
 or locally inside an `.env` file.
 
-## What does bot do?
+## What does the bot do?
 
 The bot is in Russian and it plays a so called "Cities game" with a user.
 The game is about calling a city one after another so that city one calls starts with the last letter of the previously
