@@ -1,9 +1,9 @@
-import TelegramBot from 'node-telegram-bot-api'
+import { Message } from 'node-telegram-bot-api'
 import { COMMANDS_REGEXP } from 'app'
 
 const BOT_COMMAND = 'bot_command'
 
-export function isBotCommand(msg: TelegramBot.Message): boolean {
+export function isBotCommand(msg: Message): boolean {
     return msg.entities?.[0]?.type === BOT_COMMAND
 }
 
